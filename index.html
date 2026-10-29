@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topic 1</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #e0e0e0; padding: 20px; display: flex; justify-content: center; }
+    .quiz-container { width: 100%; max-width: 650px; background: #1e1e1e; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+    .progress-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: bold; }
+    .badge { padding: 6px 12px; border-radius: 20px; font-size: 14px; }
+    .badge-correct { background-color: #2e7d32; color: white; }
+    .badge-wrong { background-color: #c62828; color: white; }
+    .question { font-size: 18px; margin-bottom: 20px; font-weight: 600; line-height: 1.4; }
+    .option { background: #2c2c2c; padding: 14px; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; border: 1px solid #3d3d3d; }
+    .option:hover { background: #3a3a3a; }
+    .option.correct { background: #1b5e20 !important; border-color: #4caf50; color: white; }
+    .option.wrong { background: #b71c1c !important; border-color: #f44336; color: white; }
+    .nav-btns { display: flex; justify-content: space-between; margin-top: 20px; }
+    button { background: #1a73e8; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    button:disabled { background: #424242; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h2><center>Topic 1</center></h2>
+  <div class="progress-bar">
+    <span id="question-number">Question 1 / 50</span>
+    <div>
+      <span class="badge badge-correct" id="score-correct">Correct: 0</span>
+      <span class="badge badge-wrong" id="score-wrong">Wrong: 0</span>
+    </div>
+  </div>
+
+  <div class="question" id="question-text">Loading question...</div>
+  <div id="options-container"></div>
+
+  <div class="nav-btns">
+    <button id="prev-btn" onclick="prevQuestion()" disabled>Previous</button>
+    <button id="next-btn" onclick="nextQuestion()">Next</button>
+  </div>
+</div>
+
+<script>
+const quizData = [
+  {
+    q: "1. What is the primary definition of the Object-Oriented Programming (OOP) approach?",
+    options: ["A programming paradigm based purely on sequential control structures", "A programming paradigm that uses 'objects' to represent data and methods", "A web-only scripting language format", "A database system for storing user credentials"],
+    answer: 1
+  },
+  {
+    q: "2. Which of the following is NOT a benefit of using the OOP approach?",
+    options: ["Increases maintenance costs", "Makes programs structured and clean", "Provides high scalability", "Supports code reusability"],
+    answer: 0
+  },
+  {
+    q: "3. What is a 'Class' in OOP?",
+    options: ["A specific instance of an object", "A blueprint or template used to create objects", "A temporary variable inside the main method", "A hardware-based build file"],
+    answer: 1
+  },
+  {
+    q: "4. What is an 'Object' in OOP?",
+    options: ["A raw template for writing code files", "A concrete specimen or instance of a class", "A special compiler inside computer hardware", "A collection of files within the JDK"],
+    answer: 1
+  },
+  {
+    q: "5. What are the two main components that define an Object?",
+    options: ["States (attributes) and Behaviors (methods)", "Compiler and Interpreter", "JVM and JRE", ".java files and .class files"],
+    answer: 0
+  },
+  {
+    q: "6. The OOP concept that binds data and methods together into a single unit while hiding internal details is called:",
+    options: ["Polymorphism", "Inheritance", "Encapsulation", "Abstraction"],
+    answer: 2
+  },
+  {
+    q: "7. The concept that allows a subclass to inherit attributes and methods from a superclass is known as:",
+    options: ["Inheritance", "Encapsulation", "Abstraction", "Polymorphism"],
+    answer: 0
+  },
+  {
+    q: "8. The concept of hiding complex implementation details and showing only essential features is called:",
+    options: ["Abstraction", "Encapsulation", "Polymorphism", "Inheritance"],
+    answer: 0
+  },
+  {
+    q: "9. The ability of a single symbol or method name to behave in multiple forms depending on context is called:",
+    options: ["Polymorphism", "Encapsulation", "Inheritance", "Abstraction"],
+    answer: 0
+  },
+  {
+    q: "10. Why does the modular structure of OOP reduce maintenance costs?",
+    options: ["Because the whole system must be rewritten if an error occurs", "Because changes in one class do not break the entire system", "Because it requires no software testing", "Because all variables are global by default"],
+    answer: 1
+  },
+  {
+    q: "11. Which Java program anatomy element is used to provide explanatory notes and is ignored by the compiler?",
+    options: ["Modifiers", "Comments", "Statements", "Blocks"],
+    answer: 1
+  },
+  {
+    q: "12. Which symbol is used for a single-line comment in Java?",
+    options: ["/*", "//", "<!--", "--"],
+    answer: 1
+  },
+  {
+    q: "13. Which symbol pair is used for a multi-line comment in Java?",
+    options: ["// and //", "/* and */", "<!-- and -->", "{ and }"],
+    answer: 1
+  },
+  {
+    q: "14. What are Reserved Words (Keywords) in Java?",
+    options: ["Variable names created freely by programmers", "Predefined words with a special meaning that cannot be used as identifiers", "Any word written inside parentheses", "Constant variable values"],
+    answer: 1
+  },
+  {
+    q: "15. Which of the following is an example of a Java Reserved Word?",
+    options: ["computeArea", "totalPrice", "public", "myStudent"],
+    answer: 2
+  },
+  {
+    q: "16. What is the role of Modifiers in Java?",
+    options: ["To specify the accessibility and properties of data, methods, or classes", "To terminate program execution abruptly", "To convert .class files into .java files", "To print output text onto the screen"],
+    answer: 0
+  },
+  {
+    q: "17. Which of the following belongs to Access Modifiers?",
+    options: ["static, final, abstract", "public, protected, private, default", "import, package, class", "void, int, double"],
+    answer: 1
+  },
+  {
+    q: "18. Which of the following is an example of a Non-Access Modifier?",
+    options: ["public", "private", "protected", "static"],
+    answer: 3
+  },
+  {
+    q: "19. Every executable statement in Java MUST end with which symbol?",
+    options: ["Hyphen (-)", "Colon (:)", "Semicolon (;)", "Exclamation mark (!)"],
+    answer: 2
+  },
+  {
+    q: "20. What is used to form a code block in Java?",
+    options: ["Square brackets [ ]", "Parentheses ( )", "Curly braces { }", "Double quotes \" \""],
+    answer: 2
+  },
+  {
+    q: "21. What is the most fundamental building block entity of a Java program?",
+    options: ["Compiler", "Class", "Package", "Array"],
+    answer: 1
+  },
+  {
+    q: "22. A collection of statements that perform a specific task when called is known as a:",
+    options: ["Method", "Variable", "Block", "Comment"],
+    answer: 0
+  },
+  {
+    q: "23. What special method acts as the entry point for any standalone Java application?",
+    options: ["public static void start()", "public static void main(String[] args)", "public void run()", "System.out.println()"],
+    answer: 1
+  },
+  {
+    q: "24. Among the three Java architecture components, which one translates bytecode (.class) into machine code?",
+    options: ["JVM (Java Virtual Machine)", "JDK (Java Development Kit)", "IDE (Integrated Development Environment)", "SDK (Software Development Kit)"],
+    answer: 0
+  },
+  {
+    q: "25. The software package that contains the JVM and class libraries required to RUN Java applications is:",
+    options: ["JDK", "JRE", "JVM", "JavaDoc"],
+    answer: 1
+  },
+  {
+    q: "26. The development kit containing the JRE along with development tools like the compiler (javac) and debugger is:",
+    options: ["JVM", "JRE", "JDK", "JAR"],
+    answer: 2
+  },
+  {
+    q: "27. Which hierarchical relationship among Java components is correct?",
+    options: ["JVM contains JRE and JDK", "JRE contains JDK and JVM", "JDK contains JRE, and JRE contains JVM", "JDK and JRE are components inside the JVM"],
+    answer: 2
+  },
+  {
+    q: "28. What tool is used to write and compile Java applications?",
+    options: ["JRE", "JVM", "JDK", "JCL"],
+    answer: 2
+  },
+  {
+    q: "29. Java source code files written by programmers are saved with the extension:",
+    options: [".class", ".java", ".exe", ".txt"],
+    answer: 1
+  },
+  {
+    q: "30. When a Java source file is successfully compiled, the resulting output file extension is:",
+    options: [".java", ".class", ".byte", ".obj"],
+    answer: 1
+  },
+  {
+    q: "31. What Command Prompt command is used to compile a Java file named `Demo.java`?",
+    options: ["java Demo.java", "javac Demo.java", "run Demo.java", "compile Demo.java"],
+    answer: 1
+  },
+  {
+    q: "32. What Command Prompt command is used to run a compiled Java program named `Demo`?",
+    options: ["javac Demo", "java Demo", "run Demo.class", "execute Demo"],
+    answer: 1
+  },
+  {
+    q: "33. Which Command Prompt command is used to change the current directory folder?",
+    options: ["dir", "cd", "cls", "md"],
+    answer: 1
+  },
+  {
+    q: "34. What is the primary role of an IDE (Integrated Development Environment) like NetBeans?",
+    options: ["To store files without any code editing features", "To ease programming by providing editors, debuggers, and compiler tools", "To replace computer hardware entirely", "To automatically convert Java code into Python"],
+    answer: 1
+  },
+  {
+    q: "35. According to Java naming conventions, what format should be used for Variable and Method names?",
+    options: ["All uppercase letters", "camelCase (lowercase first word, capitalized initial letters for subsequent words)", "PascalCase (capitalized initial letter for every word)", "Underscores between every letter"],
+    answer: 1
+  },
+  {
+    q: "36. According to Java naming conventions, what format is correct for Class names?",
+    options: ["All lowercase letters (e.g., computearea)", "PascalCase / Capitalize the first letter of each word (e.g., ComputeArea)", "Use underscores (e.g., COMPUTE_AREA)", "Can use special characters at the beginning"],
+    answer: 1
+  },
+  {
+    q: "37. According to Java naming conventions, what format is correct for Constants?",
+    options: ["camelCase (e.g., maxSpeed)", "All uppercase letters separated by underscores (e.g., MAX_VALUE)", "Lowercase with underscores (e.g., max_value)", "Same as class naming style"],
+    answer: 1
+  },
+  {
+    q: "38. Which variable name follows correct Java naming conventions?",
+    options: ["Student_Name", "studentName", "StudentName", "STUDENTNAME"],
+    answer: 1
+  },
+  {
+    q: "39. Which class name follows correct Java naming conventions?",
+    options: ["myfirstprogram", "myFirstProgram", "MyFirstProgram", "MY_FIRST_PROGRAM"],
+    answer: 2
+  },
+  {
+    q: "40. What is the recommended indentation size in basic Java programming style?",
+    options: ["1 space", "2 spaces", "10 spaces", "No spacing at all"],
+    answer: 1
+  },
+  {
+    q: "41. What is the purpose of spacing or blank lines in Java code lines?",
+    options: ["To help the compiler read code faster", "To separate code segments for better human readability", "Mandatory to prevent syntax errors", "To increase .class file size"],
+    answer: 1
+  },
+  {
+    q: "42. What is the main function of `System.out.println(\"Hello World!\");`?",
+    options: ["To read input from the user", "To print text to the screen and move to a new line", "To declare a String variable", "To compile program classes"],
+    answer: 1
+  },
+  {
+    q: "43. Variables inside a method that receive values passed from a caller are called:",
+    options: ["Parameters", "Modifiers", "Classes", "Constants"],
+    answer: 0
+  },
+  {
+    q: "44. Which of the following statements is FALSE regarding the Java Compiler?",
+    options: ["It checks for syntax errors in source code", "It generates .class bytecode files", "It translates source code directly into physical machine code without a JVM", "It is invoked using the `javac` command"],
+    answer: 2
+  },
+  {
+    q: "45. What output is produced by the JVM interpreter when executing bytecode?",
+    options: ["Java source code files", "Native Machine Code", "JavaDoc documentation", "JRE modules"],
+    answer: 1
+  },
+  {
+    q: "46. Which of the following represents a properly declared constant according to Java naming conventions?",
+    options: ["double piValue = 3.14;", "final double PI = 3.14159;", "double Pi = 3.14;", "final double pi_value = 3.14;"],
+    answer: 1
+  },
+  {
+    q: "47. The code `class Student { }` defines:",
+    options: ["A method block", "A class block", "A variable statement", "An array structure"],
+    answer: 1
+  },
+  {
+    q: "48. If you modify the source code in `Main.java`, what mandatory action must you take before running it again via CLI?",
+    options: ["Delete the JRE folder", "Recompile the code using `javac Main.java`", "Change the directory name", "Refill the JVM"],
+    answer: 1
+  },
+  {
+    q: "49. The modularity feature of OOP allows faster software development because:",
+    options: ["Code can be reused without rewriting everything (reusability)", "Programs do not require a compiler", "All variables are stored in a single file", "There is no need for a main method"],
+    answer: 0
+  },
+  {
+    q: "50. Words like `public`, `class`, `static`, and `void` in a Java program are called:",
+    options: ["Identifiers", "Reserved Words / Keywords", "Literals", "Operators"],
+    answer: 1
+  }
+];
+
+let currentIndex = 0;
+let userAnswers = new Array(quizData.length).fill(null);
+
+function loadQuestion() {
+  const qData = quizData[currentIndex];
+  document.getElementById("question-number").innerText = `Question ${currentIndex + 1} / ${quizData.length}`;
+  document.getElementById("question-text").innerText = qData.q;
+  
+  const optionsContainer = document.getElementById("options-container");
+  optionsContainer.innerHTML = "";
+
+  qData.options.forEach((opt, idx) => {
+    const div = document.createElement("div");
+    div.className = "option";
+    div.innerText = opt;
+
+    if (userAnswers[currentIndex] !== null) {
+      if (idx === qData.answer) {
+        div.classList.add("correct");
+      } else if (idx === userAnswers[currentIndex]) {
+        div.classList.add("wrong");
+      }
+    } else {
+      div.onclick = () => selectOption(idx);
+    }
+
+    optionsContainer.appendChild(div);
+  });
+
+  document.getElementById("prev-btn").disabled = currentIndex === 0;
+  document.getElementById("next-btn").innerText = currentIndex === quizData.length - 1 ? "Finish" : "Next";
+  
+  updateScore();
+}
+
+function selectOption(index) {
+  if (userAnswers[currentIndex] === null) {
+    userAnswers[currentIndex] = index;
+    loadQuestion();
+  }
+}
+
+function updateScore() {
+  let correct = 0;
+  let wrong = 0;
+
+  userAnswers.forEach((ans, idx) => {
+    if (ans !== null) {
+      if (ans === quizData[idx].answer) {
+        correct++;
+      } else {
+        wrong++;
+      }
+    }
+  });
+
+  document.getElementById("score-correct").innerText = `Correct: ${correct}`;
+  document.getElementById("score-wrong").innerText = `Wrong: ${wrong}`;
+}
+
+function prevQuestion() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    loadQuestion();
+  }
+}
+
+function nextQuestion() {
+  if (currentIndex < quizData.length - 1) {
+    currentIndex++;
+    loadQuestion();
+  } else {
+    alert(`Quiz Completed!\nYour Final Score:\nCorrect: ${document.getElementById("score-correct").innerText.split(": ")[1]}\nWrong: ${document.getElementById("score-wrong").innerText.split(": ")[1]}`);
+  }
+}
+
+// Initialize the first question
+loadQuestion();
+</script>
+
+</body>
+</html>
